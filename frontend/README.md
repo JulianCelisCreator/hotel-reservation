@@ -1,73 +1,52 @@
-# React + TypeScript + Vite
+# Frontend — Hotel Reservation
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interfaz de usuario construida con React 19, Vite 8 y TypeScript.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Estructura
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```text
+frontend/
+├── src/
+│   ├── main.tsx         # Punto de entrada de React
+│   └── App.tsx          # Componente raíz
+├── public/              # Archivos estáticos
+├── index.html           # HTML base
+├── vite.config.ts       # Configuración de Vite
+├── tsconfig.json        # Configuración de TypeScript
+└── package.json         # Dependencias del proyecto
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Instalación y ejecución
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
+
+El servidor de desarrollo corre en `http://localhost:5173`
+
+---
+
+## Scripts disponibles
+
+| Comando           | Descripción                          |
+|-------------------|--------------------------------------|
+| `npm run dev`     | Levanta el servidor de desarrollo    |
+| `npm run build`   | Compila para producción              |
+| `npm run preview` | Previsualiza el build de producción  |
+| `npm run lint`    | Revisa el código con ESLint          |
+
+---
+
+## Dependencias principales
+
+| Paquete      | Uso                         |
+|--------------|-----------------------------|
+| react        | Librería de UI              |
+| react-dom    | Renderizado en el navegador |
+| vite         | Servidor y bundler          |
+| typescript   | Tipado estático             |
