@@ -1,3 +1,11 @@
+""" Routers for hotel-related endpoints in the Hotel Reservation API.
+This module defines the API endpoints for managing hotels, including:
+- Listing all hotels
+- Retrieving detailed information about a specific hotel, including its rooms and location.
+These endpoints interact with the database using SQLAlchemy's asynchronous sessions and return data validated by Pydantic schemas.
+Autor: JulianCelisCreator
+Date: 2024-06-01"""
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -12,6 +20,7 @@ router = APIRouter(prefix="/api/hoteles", tags=["Hoteles"])
 
 @router.get("/", response_model=list[HotelSchema])
 async def listar_hoteles(db: AsyncSession = Depends(get_db)):
+    """define the endpoint for listing all hotels, including their location information."""
     result = await db.execute(
         select(Hotel).options(selectinload(Hotel.lugar))
     )
@@ -20,6 +29,7 @@ async def listar_hoteles(db: AsyncSession = Depends(get_db)):
 
 @router.get("/{id_hotel}", response_model=HotelDetalleSchema)
 async def obtener_hotel(id_hotel: int, db: AsyncSession = Depends(get_db)):
+    """define the endpoint for retrieving detailed information about a specific hotel, including its rooms and location."""
     result = await db.execute(
         select(Hotel)
         .options(
