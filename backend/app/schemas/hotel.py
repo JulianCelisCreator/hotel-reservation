@@ -57,3 +57,12 @@ class HotelSchema(BaseModel):
 class HotelDetalleSchema(HotelSchema):
     """Schema for representing detailed information about a hotel, including its rooms."""
     habitaciones: list[HabitacionSchema]
+
+    
+class TipoHabitacionCamaSchema(BaseModel):
+    """Schema for representing the type of a bed in a hotel room, including its ID and name."""
+    id_tip_hab: int
+    id_tip_cama: int
+    cantidad: int
+
+    model_config = {"from_attributes": True}
