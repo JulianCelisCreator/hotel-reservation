@@ -59,7 +59,7 @@ GRANT ALL PRIVILEGES ON DATABASE project_hotel TO <tu_usuario>;
 
 ### 2. Cargar el esquema y datos
 ```bash
-psql -U <tu_usuario> -d project_hotel -h localhost -f entrega2.sql
+psql -U <tu_usuario> -d project_hotel -h localhost -f creation.sql
 psql -U <tu_usuario> -d project_hotel -h localhost -f insertion.sql
 ```
 
