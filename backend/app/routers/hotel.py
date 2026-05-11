@@ -1,4 +1,4 @@
-""" Routers for hotel-related endpoints in the Hotel Reservation API.
+"""Routers for hotel-related endpoints in the Hotel Reservation API.
 This module defines the API endpoints for managing hotels, including:
 - Listing all hotels
 - Retrieving detailed information about a specific hotel, including its rooms and location.
@@ -13,7 +13,7 @@ from sqlalchemy.orm import selectinload
 
 from app.database import get_db
 from app.models.hotel import Hotel, Habitacion
-from app.schemas.hotel import HotelSchema, HotelDetalleSchema
+from app.schemas.hotel import HotelSchema, HotelDetalleSchema, HabitacionSchema
 
 router = APIRouter(prefix="/api/hoteles", tags=["Hoteles"])
 
@@ -21,9 +21,7 @@ router = APIRouter(prefix="/api/hoteles", tags=["Hoteles"])
 @router.get("/", response_model=list[HotelSchema])
 async def listar_hoteles(db: AsyncSession = Depends(get_db)):
     """define the endpoint for listing all hotels, including their location information."""
-    result = await db.execute(
-        select(Hotel).options(selectinload(Hotel.lugar))
-    )
+    result = await db.execute(select(Hotel).options(selectinload(Hotel.lugar)))
     return result.scalars().all()
 
 
@@ -42,3 +40,14 @@ async def obtener_hotel(id_hotel: int, db: AsyncSession = Depends(get_db)):
     if not hotel:
         raise HTTPException(status_code=404, detail="Hotel no encontrado")
     return hotel
+
+
+@router.get("/{id_hotel}/habitaciones", response_model=list[HabitacionSchema])
+async def obtener_habitaciones(id_hotel: int, db: AsyncSession = Depends(get_db)):
+    """define the endpoint for retrieving all rooms of a specific hotel."""
+    result = await db.execute(
+        select(Habitacion)
+        .options(selectinload(Habitacion.tipo))
+        .where(Habitacion.id_hotel == id_hotel)
+    )
+    return result.scalars().all()

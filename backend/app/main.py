@@ -8,6 +8,7 @@ and properly disposed of when it shuts down.
 Autor: JulianCelisCreator
 Fecha: 2024-06-01
 """
+
 import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI

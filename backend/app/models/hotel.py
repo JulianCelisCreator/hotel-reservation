@@ -68,12 +68,17 @@ class TipoHabCama(Base):
 
     __tablename__ = "tipo_habitacion_cama"
 
-    id_tip_hab = Column(Integer, ForeignKey("tipo_habitacion.id_tip_hab"), primary_key=True)
-    id_tip_cama = Column(Integer, ForeignKey("tipo_camas.id_tip_cama"), primary_key=True)
+    id_tip_hab = Column(
+        Integer, ForeignKey("tipo_habitacion.id_tip_hab"), primary_key=True
+    )
+    id_tip_cama = Column(
+        Integer, ForeignKey("tipo_camas.id_tip_cama"), primary_key=True
+    )
     cantidad = Column(Integer, nullable=False)
 
+
 class TipoHabitacion(Base):
-    """Model for representing the type of a hotel room, including 
+    """Model for representing the type of a hotel room, including
     - its ID
     - its name
     - its capacity
@@ -86,7 +91,8 @@ class TipoHabitacion(Base):
     nombre = Column(String, nullable=False)
     cant_pers = Column(Integer, nullable=False)
     precio = Column(Numeric, nullable=False)
-    tipo_habitación_camas = relationship("TipoHabCama", backref="tipo_habitacion")
+    tipo_habitacion_camas = relationship("TipoHabCama", backref="tipo_habitacion")
+
 
 class Habitacion(Base):
     """Model for representing a hotel room, including its number, type,
