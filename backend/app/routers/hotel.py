@@ -14,6 +14,7 @@ from sqlalchemy.orm import selectinload
 from app.database import get_db
 from app.models.hotel import Hotel, Habitacion
 from app.schemas.hotel import HotelSchema, HotelDetalleSchema, HabitacionSchema
+from app.services import hotel_service
 
 router = APIRouter(prefix="/api/hoteles", tags=["Hoteles"])
 
@@ -21,8 +22,12 @@ router = APIRouter(prefix="/api/hoteles", tags=["Hoteles"])
 @router.get("/", response_model=list[HotelSchema])
 async def listar_hoteles(db: AsyncSession = Depends(get_db)):
     """define the endpoint for listing all hotels, including their location information."""
-    result = await db.execute(select(Hotel).options(selectinload(Hotel.lugar)))
-    return result.scalars().all()
+    return await hotel_service.listar_hoteles(db)
+
+
+@router.get("/buscar", response_model=list[HotelSchema])
+async def buscar_hoteles(ciudad: str | None = None, db: AsyncSession = Depends(get_db)):
+    return await hotel_service.buscar_hoteles(db, ciudad)
 
 
 @router.get("/{id_hotel}", response_model=HotelDetalleSchema)

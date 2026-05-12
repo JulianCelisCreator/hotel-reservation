@@ -13,24 +13,19 @@ import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.database import engine
-from app.routers import hotel
+from app.database import AsyncSessionLocal, engine
+from app.routers import auth, hotel
+from app.utils.seed import seed_initial_data
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """_summary_
-    Manage life cycle events for the FastAPI application, ensuring that the database connection
-
-    Startup:
-        - Verifies the database conection.
-        - Prints a message confirming successful connection to the database.
-        - Manages the lifespan of the application
-    Shutdown:
-        - Disposes of the database engine to free up resources.
-    """
     async with engine.begin() as conn:
         print("Conexion a la DB exitosa")
+
+    async with AsyncSessionLocal() as db:
+        await seed_initial_data(db)
+
     yield
     await engine.dispose()
 
@@ -51,6 +46,7 @@ app.add_middleware(
 )
 
 app.include_router(hotel.router)
+app.include_router(auth.router)
 
 
 @app.get("/api")
