@@ -32,6 +32,7 @@ class Lugar(Base):
     id_lugar_padre = Column(Integer, ForeignKey("lugar.id_lugar"))
 
     tipo = relationship("TipoLugar")
+    padre = relationship("Lugar", foreign_keys=[id_lugar_padre], remote_side="Lugar.id_lugar")
 
 
 class Hotel(Base):

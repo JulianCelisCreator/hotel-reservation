@@ -12,7 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from app.database import get_db
-from app.models.hotel import Hotel, Habitacion
+from app.models.hotel import Hotel, Habitacion, Lugar
 from app.schemas.hotel import HotelSchema, HotelDetalleSchema, HabitacionSchema
 from app.services import hotel_service
 
@@ -36,7 +36,7 @@ async def obtener_hotel(id_hotel: int, db: AsyncSession = Depends(get_db)):
     result = await db.execute(
         select(Hotel)
         .options(
-            selectinload(Hotel.lugar),
+            selectinload(Hotel.lugar).selectinload(Lugar.padre),
             selectinload(Hotel.habitaciones).selectinload(Habitacion.tipo),
         )
         .where(Hotel.id_hotel == id_hotel)
