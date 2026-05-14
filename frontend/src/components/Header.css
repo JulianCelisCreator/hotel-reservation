@@ -1,0 +1,119 @@
+.top-header {
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.top-header__inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-8);
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.menu-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  transition: background var(--transition);
+}
+
+.menu-btn:hover {
+  background: var(--color-surface);
+}
+
+.top-header__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+.language-selector {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.language-label {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.language-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 600;
+  color: var(--color-text);
+  padding: 4px 0;
+  transition: color var(--transition);
+}
+
+.language-btn:hover {
+  color: var(--color-brand);
+}
+
+.stays-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 600;
+  color: var(--color-brand);
+  padding: var(--space-2) 0;
+  transition: opacity var(--transition);
+}
+
+.stays-btn:hover {
+  opacity: 0.75;
+}
+
+.auth-links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.auth-link {
+  font-weight: 600;
+  color: var(--color-brand);
+  transition: opacity var(--transition);
+}
+
+.auth-link:hover {
+  opacity: 0.75;
+}
+
+.auth-sep {
+  color: var(--color-border-strong);
+}
+
+.auth-links svg {
+  color: var(--color-brand);
+  margin-left: var(--space-2);
+}
+
+@media (max-width: 768px) {
+  .top-header__inner {
+    padding: 0 var(--space-4);
+  }
+
+  .top-header__right {
+    gap: var(--space-4);
+  }
+
+  .language-selector,
+  .stays-btn {
+    display: none;
+  }
+}
