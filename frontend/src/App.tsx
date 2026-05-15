@@ -9,6 +9,7 @@ import './App.css';
 function App() {
   const [language] = useState<'es' | 'en'>('es');
 
+export default function App() {
   return (
     <div className="app">
       <Header language={language} />

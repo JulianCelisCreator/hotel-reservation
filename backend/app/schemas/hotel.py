@@ -38,11 +38,21 @@ class HabitacionSchema(BaseModel):
     model_config = {"from_attributes": True}
 
 
-class LugarSchema(BaseModel):
-    """Schema for representing a location, including its ID and name."""
+class LugarPadreSchema(BaseModel):
+    """Schema for a parent location (no further nesting)."""
 
     id_lugar: int
     nombre: str
+
+    model_config = {"from_attributes": True}
+
+
+class LugarSchema(BaseModel):
+    """Schema for representing a location, including its ID, name, and optional parent."""
+
+    id_lugar: int
+    nombre: str
+    padre: LugarPadreSchema | None = None
 
     model_config = {"from_attributes": True}
 
