@@ -27,3 +27,13 @@ class UserOut(BaseModel):
     usuario: str
 
     model_config = {"from_attributes": True}
+
+
+class UserMeOut(BaseModel):
+    id_usuario: int
+    nombre_completo: str
+    correo: str
+    usuario: str
+    rol: str
+
+    model_config = {"from_attributes": True}

@@ -1,13 +1,22 @@
 import { useEffect, useState } from 'react'
 import HotelCard from '../components/HotelCard'
-import SearchBar from '../components/SearchBar'
 import type { Hotel } from '../services/hotelService'
-import { getHoteles, buscarHoteles } from '../services/hotelService'
+import { buscarHoteles, getHoteles } from '../services/hotelService'
+import './Home.css'
+
+function todayISO(offset = 0): string {
+  const d = new Date()
+  d.setDate(d.getDate() + offset)
+  return d.toISOString().slice(0, 10)
+}
 
 export default function Home() {
   const [hoteles, setHoteles] = useState<Hotel[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [ciudad, setCiudad] = useState('')
+  const [fechaInicio, setFechaInicio] = useState(todayISO(7))
+  const [fechaFin, setFechaFin] = useState(todayISO(9))
 
   useEffect(() => {
     getHoteles()
@@ -16,7 +25,12 @@ export default function Home() {
       .finally(() => setLoading(false))
   }, [])
 
-  async function handleSearch(ciudad: string) {
+  async function handleSearch(e: React.FormEvent) {
+    e.preventDefault()
+    if (fechaFin <= fechaInicio) {
+      setError('La fecha de salida debe ser posterior a la de entrada')
+      return
+    }
     setLoading(true)
     setError(null)
     try {
@@ -30,59 +44,84 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 text-white py-24 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl font-bold tracking-tight mb-4">
-            Encuentra tu hotel perfecto
-          </h1>
-          <p className="text-indigo-200 text-xl mb-12">
-            Las mejores tarifas en miles de destinos alrededor del mundo
+    <main className="home">
+      <section className="home-hero">
+        <div className="home-hero__overlay" />
+        <div className="home-hero__inner">
+          <p className="home-hero__eyebrow">UD · HOTELES</p>
+          <h1 className="home-hero__title">Encuentre su próximo descanso</h1>
+          <p className="home-hero__subtitle">
+            Cinco hoteles en Colombia. Una experiencia editorial de hospedaje.
           </p>
-          <SearchBar onSearch={handleSearch} />
+
+          <form className="home-search" onSubmit={handleSearch}>
+            <div className="home-search__field home-search__field--city">
+              <label className="home-search__label">Destino</label>
+              <input
+                type="text"
+                placeholder="Ciudad (Bogotá, Medellín…)"
+                value={ciudad}
+                onChange={(e) => setCiudad(e.target.value)}
+                className="home-search__input"
+              />
+            </div>
+
+            <div className="home-search__field">
+              <label className="home-search__label">Entrada</label>
+              <input
+                type="date"
+                value={fechaInicio}
+                min={todayISO()}
+                onChange={(e) => setFechaInicio(e.target.value)}
+                className="home-search__input"
+              />
+            </div>
+
+            <div className="home-search__field">
+              <label className="home-search__label">Salida</label>
+              <input
+                type="date"
+                value={fechaFin}
+                min={fechaInicio}
+                onChange={(e) => setFechaFin(e.target.value)}
+                className="home-search__input"
+              />
+            </div>
+
+            <button type="submit" className="btn btn--primary home-search__btn">
+              Buscar
+            </button>
+          </form>
         </div>
       </section>
 
-      {/* Hotel grid */}
-      <section className="max-w-6xl mx-auto px-4 py-16">
-        <h2 className="text-2xl font-bold text-gray-900 mb-8">Hoteles disponibles</h2>
+      <section className="home-listing" id="hoteles">
+        <div className="home-listing__head">
+          <h2 className="home-listing__title">Nuestros hoteles</h2>
+          <p className="home-listing__sub">
+            {loading ? 'Cargando…' : `${hoteles.length} resultado${hoteles.length === 1 ? '' : 's'}`}
+          </p>
+        </div>
 
-        {loading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl shadow-md overflow-hidden animate-pulse">
-                <div className="h-48 bg-gray-200" />
-                <div className="p-5 space-y-3">
-                  <div className="h-4 bg-gray-200 rounded w-3/4" />
-                  <div className="h-3 bg-gray-200 rounded w-1/2" />
-                  <div className="h-8 bg-gray-200 rounded w-1/3 ml-auto" />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {error && (
-          <div className="text-center py-16 text-gray-500">
-            <p>{error}</p>
-          </div>
-        )}
+        {error && <p className="home-listing__error">{error}</p>}
 
         {!loading && !error && hoteles.length === 0 && (
-          <div className="text-center py-16 text-gray-500">
-            <p>No se encontraron hoteles para tu búsqueda.</p>
-          </div>
+          <p className="home-listing__empty">No se encontraron hoteles para tu búsqueda.</p>
         )}
 
         {!loading && !error && hoteles.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="home-listing__grid">
             {hoteles.map((hotel) => (
-              <HotelCard key={hotel.id_hotel} hotel={hotel} />
+              <HotelCard
+                key={hotel.id_hotel}
+                hotel={hotel}
+                fechaInicio={fechaInicio}
+                fechaFin={fechaFin}
+              />
             ))}
           </div>
         )}
       </section>
-    </div>
+    </main>
   )
 }

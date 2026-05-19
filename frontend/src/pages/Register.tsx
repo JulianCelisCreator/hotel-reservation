@@ -22,10 +22,11 @@ export default function Register() {
     setError(null)
     try {
       const { access_token } = await register(form)
-      saveToken(access_token)
+      await saveToken(access_token)
       navigate('/')
-    } catch (err: any) {
-      setError(err?.response?.data?.detail ?? 'Error al registrar usuario')
+    } catch (err: unknown) {
+      const e = err as { response?: { data?: { detail?: string } } }
+      setError(e?.response?.data?.detail ?? 'Error al registrar usuario')
     } finally {
       setLoading(false)
     }

@@ -1,38 +1,143 @@
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import type { Hotel } from '../services/hotelService'
+import './HotelCard.css'
 
 interface Props {
   hotel: Hotel
+  fechaInicio?: string
+  fechaFin?: string
 }
 
-export default function HotelCard({ hotel }: Props) {
+const HOTEL_IMAGES: Record<number, string[]> = {
+  1: [
+    'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=900&q=80',
+    'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=900&q=80',
+    'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=900&q=80',
+  ],
+  2: [
+    'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=900&q=80',
+    'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=900&q=80',
+    'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=900&q=80',
+  ],
+  3: [
+    'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=900&q=80',
+    'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=900&q=80',
+    'https://images.unsplash.com/photo-1455587734955-081b22074882?w=900&q=80',
+  ],
+  4: [
+    'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=900&q=80',
+    'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=900&q=80',
+    'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=900&q=80',
+  ],
+  5: [
+    'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=900&q=80',
+    'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=900&q=80',
+    'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=900&q=80',
+  ],
+}
+
+const FALLBACK = ['https://images.unsplash.com/photo-1455587734955-081b22074882?w=900&q=80']
+
+export default function HotelCard({ hotel, fechaInicio, fechaFin }: Props) {
+  const imgs = HOTEL_IMAGES[hotel.id_hotel] ?? FALLBACK
+  const [idx, setIdx] = useState(0)
+  const [paused, setPaused] = useState(false)
+
+  useEffect(() => {
+    if (paused || imgs.length <= 1) return
+    const interval = setInterval(() => setIdx((i) => (i + 1) % imgs.length), 3800)
+    return () => clearInterval(interval)
+  }, [paused, imgs.length])
+
+  function prev(e: React.MouseEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+    setIdx((i) => (i - 1 + imgs.length) % imgs.length)
+  }
+
+  function next(e: React.MouseEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+    setIdx((i) => (i + 1) % imgs.length)
+  }
+
+  function goTo(i: number, e: React.MouseEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+    setIdx(i)
+  }
+
+  const queryString = fechaInicio && fechaFin ? `?desde=${fechaInicio}&hasta=${fechaFin}` : ''
+
   return (
-    <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-      <div className="h-48 bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center">
-        <svg className="w-16 h-16 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-        </svg>
+    <Link
+      to={`/hoteles/${hotel.id_hotel}${queryString}`}
+      className="hotel-card"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <div className="hotel-card__slider">
+        {imgs.map((src, i) => (
+          <div
+            key={src}
+            className={`hotel-card__slide ${i === idx ? 'hotel-card__slide--active' : ''}`}
+            style={{ backgroundImage: `url(${src})` }}
+            aria-hidden={i !== idx}
+          />
+        ))}
+
+        {imgs.length > 1 && (
+          <>
+            <button
+              type="button"
+              className="hotel-card__arrow hotel-card__arrow--prev"
+              onClick={prev}
+              aria-label="Imagen anterior"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              className="hotel-card__arrow hotel-card__arrow--next"
+              onClick={next}
+              aria-label="Siguiente imagen"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+            <div className="hotel-card__dots">
+              {imgs.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={(e) => goTo(i, e)}
+                  className={`hotel-card__dot ${i === idx ? 'hotel-card__dot--active' : ''}`}
+                  aria-label={`Imagen ${i + 1}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
-      <div className="p-5">
-        <h3 className="text-lg font-semibold text-gray-900 truncate">{hotel.nombre}</h3>
-        <p className="text-sm text-gray-500 mt-1 flex items-center gap-1">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+
+      <div className="hotel-card__body">
+        <h3 className="hotel-card__name">{hotel.nombre}</h3>
+        <p className="hotel-card__location">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
           {hotel.lugar?.nombre ?? 'Ubicación no disponible'}
         </p>
-        {hotel.direccion && (
-          <p className="text-xs text-gray-400 mt-1 truncate">{hotel.direccion}</p>
-        )}
-        <div className="mt-4 flex items-center justify-between">
-          <span className="text-indigo-600 font-semibold text-sm">Ver disponibilidad</span>
-          <button className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition-colors">
-            Ver detalles
-          </button>
+        {hotel.direccion && <p className="hotel-card__address">{hotel.direccion}</p>}
+        <div className="hotel-card__footer">
+          <span className="hotel-card__cta">Ver detalles →</span>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }

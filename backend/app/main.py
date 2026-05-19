@@ -14,7 +14,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import AsyncSessionLocal, engine
-from app.routers import auth, hotel
+from app.routers import admin, auth, catalogo, hotel, reserva
 from app.utils.seed import seed_initial_data
 
 
@@ -47,6 +47,9 @@ app.add_middleware(
 
 app.include_router(hotel.router)
 app.include_router(auth.router)
+app.include_router(reserva.router)
+app.include_router(admin.router)
+app.include_router(catalogo.router)
 
 
 @app.get("/api")

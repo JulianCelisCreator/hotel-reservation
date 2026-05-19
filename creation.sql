@@ -112,7 +112,7 @@ CREATE TABLE reserva (
   fecha_inicio DATE NOT NULL,
   fecha_fin DATE NOT NULL,
   total NUMERIC CHECK (total >= 0),
-  estado VARCHAR(20) CHECK (estado IN ('pendiente', 'confirmada', 'cancelada')),
+  estado VARCHAR(20) CHECK (estado IN ('pendiente', 'confirmada', 'cancelada', 'finalizada')),
   id_usuario INT NOT NULL REFERENCES usuarios(id_usuario),
   CONSTRAINT chk_fechas CHECK (fecha_fin > fecha_inicio)
 );

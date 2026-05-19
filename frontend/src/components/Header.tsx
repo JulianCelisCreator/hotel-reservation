@@ -1,10 +1,20 @@
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import './Header.css';
 
 interface HeaderProps {
-  language: 'es' | 'en';
+  language?: 'es' | 'en';
 }
 
-function Header({ language }: HeaderProps) {
+function Header({ language = 'es' }: HeaderProps) {
+  const { user, isAdmin, logout } = useAuth();
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    logout();
+    navigate('/');
+  }
+
   return (
     <header className="top-header">
       <div className="top-header__inner">
@@ -27,27 +37,44 @@ function Header({ language }: HeaderProps) {
             </button>
           </div>
 
-          <button className="stays-btn">
-            Sus estadías
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-              <rect x="3" y="4" width="18" height="18" rx="2" />
-              <line x1="16" y1="2" x2="16" y2="6" />
-              <line x1="8" y1="2" x2="8" y2="6" />
-              <line x1="3" y1="10" x2="21" y2="10" />
-              <circle cx="16" cy="16" r="3" />
-              <line x1="18.5" y1="18.5" x2="21" y2="21" />
-            </svg>
-          </button>
+          {user && (
+            <Link to={isAdmin ? '/admin/reservas' : '/mis-reservas'} className="stays-btn">
+              {isAdmin ? 'Reservas (admin)' : 'Sus estadías'}
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <rect x="3" y="4" width="18" height="18" rx="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+                <circle cx="16" cy="16" r="3" />
+                <line x1="18.5" y1="18.5" x2="21" y2="21" />
+              </svg>
+            </Link>
+          )}
 
           <div className="auth-links">
-            <a href="#signup" className="auth-link">Inscríbase</a>
-            <span className="auth-sep">|</span>
-            <a href="#login" className="auth-link">Iniciar sesión</a>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <circle cx="12" cy="12" r="10" />
-              <circle cx="12" cy="10" r="3" />
-              <path d="M6.5 19c1.5-3 4-4 5.5-4s4 1 5.5 4" />
-            </svg>
+            {user ? (
+              <>
+                <span className="auth-link">Hola, {user.nombre_completo.split(' ')[0]}</span>
+                <span className="auth-sep">|</span>
+                <button onClick={handleLogout} className="auth-link">Cerrar sesión</button>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <circle cx="12" cy="12" r="10" />
+                  <circle cx="12" cy="10" r="3" />
+                  <path d="M6.5 19c1.5-3 4-4 5.5-4s4 1 5.5 4" />
+                </svg>
+              </>
+            ) : (
+              <>
+                <Link to="/register" className="auth-link">Inscríbase</Link>
+                <span className="auth-sep">|</span>
+                <Link to="/login" className="auth-link">Iniciar sesión</Link>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <circle cx="12" cy="12" r="10" />
+                  <circle cx="12" cy="10" r="3" />
+                  <path d="M6.5 19c1.5-3 4-4 5.5-4s4 1 5.5 4" />
+                </svg>
+              </>
+            )}
           </div>
         </div>
       </div>

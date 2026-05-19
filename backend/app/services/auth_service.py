@@ -33,10 +33,10 @@ async def register(
     if await usuario_repository.get_by_usuario(db, usuario):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="El nombre de usuario ya existe")
 
-    result = await db.execute(select(TipoUsuario).where(TipoUsuario.rol == "CLIENTE"))
+    result = await db.execute(select(TipoUsuario).where(TipoUsuario.rol == "cliente"))
     tipo = result.scalar_one_or_none()
     if tipo is None:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Rol CLIENTE no configurado")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Rol cliente no configurado")
 
     salt = generate_salt()
     new_user = Usuarios(
@@ -49,11 +49,11 @@ async def register(
         id_tipo_usuario=tipo.id_tipo_usuario,
     )
     await usuario_repository.create_usuario(db, new_user)
-    token = create_access_token({"sub": str(new_user.id_usuario), "rol": "CLIENTE"})
+    token = create_access_token({"sub": str(new_user.id_usuario), "rol": "cliente"})
     return {"access_token": token, "token_type": "bearer"}
 
 
 def _get_rol(user: Usuarios) -> str:
     if user.tipo_usuario:
         return user.tipo_usuario.rol
-    return "CLIENTE"
+    return "cliente"

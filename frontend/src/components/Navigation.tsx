@@ -1,31 +1,48 @@
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import './Navigation.css';
 
-const navItems = [
-  { label: 'Inicio', href: '#inicio' },
-  { label: 'Habitaciones', href: '#habitaciones' },
-  { label: 'Información del hotel', href: '#info' },
-  { label: 'Ofertas', href: '#ofertas' },
-  { label: 'Galería', href: '#galeria' },
-  { label: 'Ubicación', href: '#ubicacion' },
-  { label: 'Restaurantes', href: '#restaurantes' },
-  { label: 'Eventos', href: '#eventos' },
+interface NavItem {
+  label: string;
+  to: string;
+}
+
+const navItemsBase: NavItem[] = [
+  { label: 'Inicio', to: '/' },
+  { label: 'Habitaciones', to: '/#habitaciones' },
+  { label: 'Información del hotel', to: '/#info' },
+  { label: 'Ofertas', to: '/#ofertas' },
+  { label: 'Galería', to: '/#galeria' },
+  { label: 'Ubicación', to: '/#ubicacion' },
+  { label: 'Restaurantes', to: '/#restaurantes' },
+  { label: 'Eventos', to: '/#eventos' },
 ];
 
 function Navigation() {
+  const { user, isAdmin } = useAuth();
+  const items: NavItem[] = [...navItemsBase];
+  if (user) {
+    items.push(
+      isAdmin
+        ? { label: 'Administrar reservas', to: '/admin/reservas' }
+        : { label: 'Mis reservas', to: '/mis-reservas' },
+    );
+  }
+
   return (
     <nav className="nav">
       <div className="nav__inner">
-        <a href="/" className="logo" aria-label="Inicio">
+        <Link to="/" className="logo" aria-label="Inicio">
           <span className="logo__mark">UD</span>
           <span className="logo__dot">·</span>
-        </a>
+        </Link>
 
         <ul className="nav__list">
-          {navItems.map((item, idx) => (
-            <li key={item.label} style={{ animationDelay: `${idx * 40}ms` }}>
-              <a href={item.href} className="nav__link">
+          {items.map((item, idx) => (
+            <li key={item.label + idx} style={{ animationDelay: `${idx * 40}ms` }}>
+              <Link to={item.to} className="nav__link">
                 {item.label}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>

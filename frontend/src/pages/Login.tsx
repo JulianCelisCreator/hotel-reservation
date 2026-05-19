@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { login } from '../services/authService'
 
 export default function Login() {
   const { login: saveToken } = useAuth()
   const navigate = useNavigate()
+  const [params] = useSearchParams()
   const [form, setForm] = useState({ correo: '', password: '' })
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -16,8 +17,9 @@ export default function Login() {
     setError(null)
     try {
       const { access_token } = await login(form.correo, form.password)
-      saveToken(access_token)
-      navigate('/')
+      await saveToken(access_token)
+      const redirect = params.get('redirect') ?? '/'
+      navigate(redirect)
     } catch {
       setError('Correo o contraseña incorrectos')
     } finally {

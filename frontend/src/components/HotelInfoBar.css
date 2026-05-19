@@ -107,6 +107,120 @@
   color: var(--color-brand);
 }
 
+.date-picker {
+  position: relative;
+  cursor: pointer;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition);
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+.date-picker:hover {
+  background: var(--color-surface);
+}
+
+.date-picker:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+/* Input oculto pero accesible para que showPicker() funcione */
+.date-picker__input {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  font-family: inherit;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.guest-wrapper {
+  position: relative;
+}
+
+.guest-popover {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  z-index: 20;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-4);
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  animation: fadeInUp 200ms ease;
+}
+
+.guest-popover__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+.guest-popover__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.guest-popover__controls button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-brand);
+  font-size: 16px;
+  font-weight: 600;
+  transition: all var(--transition);
+}
+
+.guest-popover__controls button:hover {
+  border-color: var(--color-brand);
+  background: var(--color-surface);
+}
+
+.guest-popover__controls > span {
+  min-width: 18px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.guest-popover__close {
+  align-self: flex-end;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-brand);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-brand);
+  transition: all var(--transition);
+}
+
+.guest-popover__close:hover {
+  background: var(--color-brand);
+  color: #fff;
+}
+
 /* Right — actions */
 .hotel-info__right {
   display: flex;
