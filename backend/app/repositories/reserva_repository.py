@@ -94,39 +94,57 @@ async def crear_reserva_completa(
     id_forma_pago: int,
     fecha_pago: date,
 ) -> Reserva:
-    reserva = Reserva(
-        fecha_inicio=fecha_inicio,
-        fecha_fin=fecha_fin,
-        total=total,
-        estado="confirmada",
-        id_usuario=id_usuario,
-    )
-    db.add(reserva)
-    await db.flush()  # obtiene id_reserva
+    """Inserta reserva + habitación + extras + pago en una transacción atómica.
 
-    db.add(ReservaHabitacion(id_reserva=reserva.id_reserva, id_hotel=id_hotel, num_hab=num_hab))
+    Demuestra el uso de BEGIN/COMMIT/ROLLBACK explícitos:
+    - `await db.begin_nested()` abre un SAVEPOINT (BEGIN explícito anidado)
+    - Si todo va bien, `commit()` confirma la transacción
+    - Si algo falla, `rollback()` revierte TODOS los INSERTs (no queda una
+      reserva sin pago, ni un pago sin reserva)
+    """
+    try:
+        # BEGIN explícito (savepoint dentro de la transacción autobegin de la sesión)
+        savepoint = await db.begin_nested()
 
-    for id_extra, cantidad in extras:
+        reserva = Reserva(
+            fecha_inicio=fecha_inicio,
+            fecha_fin=fecha_fin,
+            total=total,
+            estado="confirmada",
+            id_usuario=id_usuario,
+        )
+        db.add(reserva)
+        await db.flush()  # asigna id_reserva sin commit
+
+        db.add(ReservaHabitacion(id_reserva=reserva.id_reserva, id_hotel=id_hotel, num_hab=num_hab))
+
+        for id_extra, cantidad in extras:
+            db.add(
+                ReservaExtra(
+                    id_reserva=reserva.id_reserva,
+                    id_extra=id_extra,
+                    cantidad=cantidad,
+                )
+            )
+
         db.add(
-            ReservaExtra(
+            Pago(
+                fecha=fecha_pago,
+                monto=total,
+                estado="pagado",
                 id_reserva=reserva.id_reserva,
-                id_extra=id_extra,
-                cantidad=cantidad,
+                id_forma_pago=id_forma_pago,
             )
         )
 
-    db.add(
-        Pago(
-            fecha=fecha_pago,
-            monto=total,
-            estado="pagado",
-            id_reserva=reserva.id_reserva,
-            id_forma_pago=id_forma_pago,
-        )
-    )
+        await savepoint.commit()  # COMMIT explícito del savepoint
+        await db.commit()         # COMMIT de la transacción externa
+        id_creada = reserva.id_reserva
+    except Exception:
+        await db.rollback()       # ROLLBACK explícito ante cualquier error
+        raise
 
-    await db.commit()
-    return await get_by_id(db, reserva.id_reserva)  # type: ignore[return-value]
+    return await get_by_id(db, id_creada)  # type: ignore[return-value]
 
 
 async def get_by_id(db: AsyncSession, id_reserva: int) -> Reserva | None:
@@ -179,3 +197,26 @@ async def actualizar(db: AsyncSession, reserva: Reserva) -> Reserva:
 async def get_hotel_by_id(db: AsyncSession, id_hotel: int) -> Hotel | None:
     result = await db.execute(select(Hotel).where(Hotel.id_hotel == id_hotel))
     return result.scalar_one_or_none()
+
+
+async def eliminar_reserva(db: AsyncSession, id_reserva: int) -> bool:
+    """Borra la reserva (las hijas se borran por ON DELETE CASCADE)."""
+    from sqlalchemy import delete as sa_delete
+
+    result = await db.execute(sa_delete(Reserva).where(Reserva.id_reserva == id_reserva))
+    await db.commit()
+    return result.rowcount > 0
+
+
+async def recalcular_total_sql(db: AsyncSession, id_reserva: int):
+    """Invoca la FUNCTION SQL `fn_calcular_total_reserva(id_reserva)`.
+
+    Demuestra el uso de la lógica de negocio encapsulada en la DB.
+    """
+    from sqlalchemy import text
+
+    result = await db.execute(
+        text("SELECT fn_calcular_total_reserva(:id) AS total"),
+        {"id": id_reserva},
+    )
+    return result.scalar()

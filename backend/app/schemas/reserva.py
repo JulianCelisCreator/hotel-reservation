@@ -104,6 +104,35 @@ class CalificacionOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class StatsAdmin(BaseModel):
+    total: int
+    pendiente: int
+    confirmada: int
+    finalizada: int
+    cancelada: int
+    ingresos_totales: float = 0
+    ticket_promedio: float = 0
+
+
+class UsuarioAdmin(BaseModel):
+    id_usuario: int
+    nombre_completo: str
+    correo: str
+    usuario: str
+    fecha_registro: date
+    num_reservas: int
+
+
+class ReservaAdminCreate(BaseModel):
+    id_usuario: int
+    id_hotel: int
+    num_hab: int
+    fecha_inicio: date
+    fecha_fin: date
+    extras: list[ExtraReservaIn] = []
+    id_forma_pago: int
+
+
 class ReservaOut(BaseModel):
     id_reserva: int
     fecha_inicio: date

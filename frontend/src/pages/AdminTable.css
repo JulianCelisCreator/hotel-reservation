@@ -1,0 +1,223 @@
+.admin-page {
+  max-width: 1200px;
+}
+
+.admin-page__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: var(--space-6);
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.admin-page__eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--color-accent-dark);
+}
+
+.admin-page__title {
+  font-family: var(--font-display);
+  font-size: 36px;
+  color: var(--color-brand);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin: var(--space-2) 0 var(--space-1);
+}
+
+.admin-page__sub {
+  color: var(--color-text-muted);
+}
+
+.admin-page__msg {
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.admin-page__msg--error {
+  color: #b00020;
+}
+
+.admin-page__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-brand);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: var(--space-3);
+}
+
+/* Hoteles grid */
+.hotels-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-4);
+}
+
+.hotel-tile {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  transition: all var(--transition);
+}
+
+.hotel-tile:hover {
+  border-color: var(--color-brand);
+  box-shadow: var(--shadow-md);
+}
+
+.hotel-tile__name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--color-brand);
+  font-weight: 600;
+}
+
+.hotel-tile__location {
+  font-size: 13px;
+  color: var(--color-accent-dark);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.hotel-tile__address {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  flex: 1;
+}
+
+.hotel-tile__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-3);
+}
+
+.hotel-tile__link {
+  color: var(--color-brand);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.hotel-tile__link--ghost {
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.hotel-tile__link:hover {
+  text-decoration: underline;
+}
+
+/* Generic admin table */
+.admin-card {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.admin-table-wrap {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.admin-table thead {
+  background: var(--color-surface-alt);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.admin-table tbody tr:hover {
+  background: var(--color-surface);
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table__action {
+  color: var(--color-brand);
+  font-weight: 600;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  border: none;
+  margin-right: var(--space-3);
+}
+
+.admin-table__action:hover {
+  text-decoration: underline;
+}
+
+.admin-table__action--danger {
+  color: #b00020;
+}
+
+.admin-search {
+  margin-bottom: var(--space-4);
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.admin-search input {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  min-width: 240px;
+}
+
+.admin-search input:focus {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 1px;
+  border-color: var(--color-brand);
+}
+
+.admin-empty {
+  text-align: center;
+  padding: var(--space-8);
+  color: var(--color-text-muted);
+}
+
+.estado-pill {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+}
+
+.estado-pill--confirmada { background: #e8f7ec; color: #1f7a3f; }
+.estado-pill--finalizada { background: #e6f0fd; color: var(--color-brand); }
+.estado-pill--pendiente { background: #fdf6e3; color: #8a6b1c; }
+.estado-pill--cancelada { background: #fdecec; color: #b00020; }

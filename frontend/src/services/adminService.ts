@@ -39,3 +39,50 @@ export async function cancelarReservaAdmin(id: number): Promise<ReservaOut> {
   const { data } = await client.patch<ReservaOut>(`/admin/reservas/${id}/cancelar`)
   return data
 }
+
+export interface AdminStats {
+  total: number
+  pendiente: number
+  confirmada: number
+  finalizada: number
+  cancelada: number
+}
+
+export async function getStats(): Promise<AdminStats> {
+  const { data } = await client.get<AdminStats>('/admin/stats')
+  return data
+}
+
+export interface UsuarioAdmin {
+  id_usuario: number
+  nombre_completo: string
+  correo: string
+  usuario: string
+  fecha_registro: string
+  num_reservas: number
+}
+
+export async function getClientes(): Promise<UsuarioAdmin[]> {
+  const { data } = await client.get<UsuarioAdmin[]>('/admin/usuarios')
+  return data
+}
+
+export async function getReservasCliente(idUsuario: number): Promise<ReservaOut[]> {
+  const { data } = await client.get<ReservaOut[]>(`/admin/usuarios/${idUsuario}/reservas`)
+  return data
+}
+
+export interface ReservaAdminCreate {
+  id_usuario: number
+  id_hotel: number
+  num_hab: number
+  fecha_inicio: string
+  fecha_fin: string
+  extras: { id_extra: number; cantidad: number }[]
+  id_forma_pago: number
+}
+
+export async function crearReservaAdmin(payload: ReservaAdminCreate): Promise<ReservaOut> {
+  const { data } = await client.post<ReservaOut>('/admin/reservas', payload)
+  return data
+}
