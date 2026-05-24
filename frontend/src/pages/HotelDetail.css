@@ -1,0 +1,113 @@
+.hotel-detail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-loading {
+  text-align: center;
+  padding: var(--space-16);
+  color: var(--color-text-muted);
+}
+
+.detail-error {
+  color: #b00020;
+  text-align: center;
+  padding: var(--space-4);
+}
+
+.rooms {
+  background: var(--color-surface);
+  padding: var(--space-12) 0;
+}
+
+.rooms__inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-8);
+}
+
+.rooms__title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--color-brand);
+  margin-bottom: var(--space-8);
+}
+
+.rooms__empty {
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: var(--space-8);
+}
+
+.rooms__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  list-style: none;
+}
+
+.room {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: var(--space-6);
+  align-items: center;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5) var(--space-6);
+  transition: all var(--transition);
+}
+
+.room:hover {
+  border-color: var(--color-brand);
+  box-shadow: var(--shadow-md);
+}
+
+.room__name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--color-brand);
+  margin-bottom: var(--space-1);
+}
+
+.room__type {
+  font-size: 14px;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.room__capacity {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+}
+
+.room__price-block {
+  text-align: right;
+}
+
+.room__price {
+  font-family: var(--font-display);
+  font-size: 24px;
+  color: var(--color-accent-dark);
+  font-weight: 600;
+}
+
+.room__price-label {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  .room {
+    grid-template-columns: 1fr;
+    text-align: left;
+  }
+
+  .room__price-block {
+    text-align: left;
+  }
+}

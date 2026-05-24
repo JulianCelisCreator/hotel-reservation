@@ -106,3 +106,4 @@ class Habitacion(Base):
     id_tipo_hab = Column(Integer, ForeignKey("tipo_habitacion.id_tip_hab"))
     hotel = relationship("Hotel", back_populates="habitaciones")
     tipo = relationship("TipoHabitacion")
+

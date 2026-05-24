@@ -1,13 +1,11 @@
 from datetime import date
 
-from sqlalchemy import select, text
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import generate_salt, hash_password
 from app.models.usuario import TipoUsuario, Usuarios
 
-
-ROLES = ["ADMIN", "CLIENTE", "COLABORADOR"]
 
 ADMIN_DATA = {
     "nombre_completo": "Administrador",
@@ -19,16 +17,7 @@ ADMIN_DATA = {
 
 
 async def seed_initial_data(db: AsyncSession) -> None:
-    await _seed_roles(db)
     await _seed_admin(db)
-
-
-async def _seed_roles(db: AsyncSession) -> None:
-    for rol in ROLES:
-        result = await db.execute(select(TipoUsuario).where(TipoUsuario.rol == rol))
-        if result.scalar_one_or_none() is None:
-            db.add(TipoUsuario(rol=rol))
-    await db.commit()
 
 
 async def _seed_admin(db: AsyncSession) -> None:
@@ -36,7 +25,7 @@ async def _seed_admin(db: AsyncSession) -> None:
     if result.scalar_one_or_none() is not None:
         return
 
-    result = await db.execute(select(TipoUsuario).where(TipoUsuario.rol == "ADMIN"))
+    result = await db.execute(select(TipoUsuario).where(TipoUsuario.rol == "administrador"))
     tipo_admin = result.scalar_one_or_none()
     if tipo_admin is None:
         return
