@@ -101,6 +101,16 @@ export default function HotelDetail() {
         <Gallery />
       </section>
 
+      <section id="ubicacion" className="hotel-location">
+        <div className="hotel-location__inner">
+          <h2 className="hotel-location__title">Ubicación</h2>
+          <p className="hotel-location__place">
+            {hotel.lugar?.padre?.nombre ? `${hotel.lugar.padre.nombre} — ${hotel.lugar.nombre}` : hotel.lugar?.nombre ?? 'Ubicación no disponible'}
+          </p>
+          {hotel.direccion && <p className="hotel-location__address">{hotel.direccion}</p>}
+        </div>
+      </section>
+
       {error && <p className="detail-error">{error}</p>}
 
       {habitaciones !== null && (

@@ -9,13 +9,9 @@ interface NavItem {
 
 const navItemsBase: NavItem[] = [
   { label: 'Inicio', to: '/' },
-  { label: 'Habitaciones', to: '/#habitaciones' },
-  { label: 'Información del hotel', to: '/#info' },
   { label: 'Ofertas', to: '/#ofertas' },
-  { label: 'Galería', to: '/#galeria' },
+  { label: 'Información de Hotel', to: '/#info' },
   { label: 'Ubicación', to: '/#ubicacion' },
-  { label: 'Restaurantes', to: '/#restaurantes' },
-  { label: 'Eventos', to: '/#eventos' },
 ];
 
 function Navigation() {
