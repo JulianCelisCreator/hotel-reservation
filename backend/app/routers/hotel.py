@@ -13,7 +13,12 @@ from sqlalchemy.orm import selectinload
 
 from app.database import get_db
 from app.models.hotel import Hotel, Habitacion, Lugar
-from app.schemas.hotel import HotelSchema, HotelDetalleSchema, HabitacionSchema
+from app.schemas.hotel import (
+    HabitacionSchema,
+    HotelDestacadoSchema,
+    HotelDetalleSchema,
+    HotelSchema,
+)
 from app.services import hotel_service
 
 router = APIRouter(prefix="/api/hoteles", tags=["Hoteles"])
@@ -27,12 +32,19 @@ async def listar_hoteles(db: AsyncSession = Depends(get_db)):
 
 @router.get("/buscar", response_model=list[HotelSchema])
 async def buscar_hoteles(ciudad: str | None = None, db: AsyncSession = Depends(get_db)):
+    """Busca hoteles filtrando por ciudad."""
     return await hotel_service.buscar_hoteles(db, ciudad)
+
+
+@router.get("/destacados", response_model=list[HotelDestacadoSchema])
+async def hoteles_destacados(db: AsyncSession = Depends(get_db)):
+    """Hoteles cuya calificación promedio supera el promedio global (subconsulta SQL)."""
+    return await hotel_service.hoteles_destacados(db)
 
 
 @router.get("/{id_hotel}", response_model=HotelDetalleSchema)
 async def obtener_hotel(id_hotel: int, db: AsyncSession = Depends(get_db)):
-    """define the endpoint for retrieving detailed information about a specific hotel, including its rooms and location."""
+    """Retorna información detallada de un hotel incluyendo habitaciones y ubicación."""
     result = await db.execute(
         select(Hotel)
         .options(
