@@ -11,7 +11,9 @@ hotel-reservation/
 ├── backend/        # API REST con FastAPI y PostgreSQL
 ├── frontend/       # Interfaz de usuario con React + Vite + TypeScript
 ├── entrega2.sql    # Esquema de la base de datos y seed data
-├── insertion.sql   # Datos iniciales adicionales
+├── sql/
+│   ├── creation.sql      # Esquema de base de datos
+│   └── insertion.sql     # Datos iniciales adicionales
 └── README.md
 ```
 
@@ -59,8 +61,8 @@ GRANT ALL PRIVILEGES ON DATABASE project_hotel TO <tu_usuario>;
 
 ### 2. Cargar el esquema y datos
 ```bash
-psql -U <tu_usuario> -d project_hotel -h localhost -f creation.sql
-psql -U <tu_usuario> -d project_hotel -h localhost -f insertion.sql
+psql -U <tu_usuario> -d project_hotel -h localhost -f sql/creation.sql
+psql -U <tu_usuario> -d project_hotel -h localhost -f sql/insertion.sql
 ```
 
 ---
