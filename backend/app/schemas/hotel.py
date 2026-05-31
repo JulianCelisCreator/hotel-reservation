@@ -74,6 +74,18 @@ class HotelDetalleSchema(HotelSchema):
     habitaciones: list[HabitacionSchema]
 
 
+class HotelDestacadoSchema(BaseModel):
+    """Hotel cuya calificación promedio supera el promedio global (R5 - subconsulta)."""
+
+    id_hotel: int
+    nombre: str
+    direccion: str | None
+    ciudad: str | None
+    promedio_calificacion: float
+
+    model_config = {"from_attributes": True}
+
+
 class TipoHabitacionCamaSchema(BaseModel):
     """Schema for representing the type of a bed in a hotel room, including its ID and name."""
 
