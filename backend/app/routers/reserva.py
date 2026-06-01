@@ -1,5 +1,5 @@
 from datetime import date
-
+from sqlalchemy import text
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -24,7 +24,12 @@ async def disponibilidad(
     fecha_fin: date = Query(...),
     db: AsyncSession = Depends(get_db),
 ):
-    return await reserva_service.disponibilidad(db, id_hotel, fecha_inicio, fecha_fin)
+    return await reserva_service.disponibilidad(
+        db,
+        id_hotel,
+        fecha_inicio,
+        fecha_fin,
+    )
 
 
 @router.post("/", response_model=ReservaOut, status_code=201)
@@ -33,7 +38,11 @@ async def crear_reserva(
     db: AsyncSession = Depends(get_db),
     user: Usuarios = Depends(get_current_user),
 ):
-    return await reserva_service.crear_reserva(db, user.id_usuario, payload)
+    return await reserva_service.crear_reserva(
+        db,
+        user.id_usuario,
+        payload,
+    )
 
 
 @router.get("/mias", response_model=list[ReservaOut])
@@ -41,7 +50,10 @@ async def mis_reservas(
     db: AsyncSession = Depends(get_db),
     user: Usuarios = Depends(get_current_user),
 ):
-    return await reserva_service.listar_mis_reservas(db, user.id_usuario)
+    return await reserva_service.listar_mis_reservas(
+        db,
+        user.id_usuario,
+    )
 
 
 @router.patch("/{id_reserva}/cancelar", response_model=ReservaOut)
@@ -50,14 +62,57 @@ async def cancelar_reserva_propia(
     db: AsyncSession = Depends(get_db),
     user: Usuarios = Depends(get_current_user),
 ):
-    return await reserva_service.cancelar_propia(db, id_reserva, user.id_usuario)
+    return await reserva_service.cancelar_propia(
+        db,
+        id_reserva,
+        user.id_usuario,
+    )
 
 
-@router.post("/{id_reserva}/calificacion", response_model=ReservaOut, status_code=201)
+@router.post(
+    "/{id_reserva}/calificacion",
+    response_model=ReservaOut,
+    status_code=201,
+)
 async def calificar_reserva(
     id_reserva: int,
     payload: CalificacionCreate,
     db: AsyncSession = Depends(get_db),
     user: Usuarios = Depends(get_current_user),
 ):
-    return await reserva_service.crear_calificacion(db, id_reserva, user.id_usuario, payload)
+    return await reserva_service.crear_calificacion(
+        db,
+        id_reserva,
+        user.id_usuario,
+        payload,
+    )
+
+
+# --------------------------------------------------
+# R2 - SUBCONSULTA SOBRE RESERVA
+# --------------------------------------------------
+@router.get("/usuarios-con-reservas-confirmadas")
+async def usuarios_con_reservas_confirmadas(
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Obtiene usuarios que tienen al menos una reserva confirmada.
+    """
+
+    sql = text("""
+        SELECT
+            u.id_usuario,
+            u.nombre_completo,
+            u.correo
+        FROM usuarios u
+        WHERE u.id_usuario IN (
+            SELECT r.id_usuario
+            FROM reserva r
+            WHERE r.estado = 'confirmada'
+        )
+        ORDER BY u.nombre_completo
+    """)
+
+    result = await db.execute(sql)
+
+    return result.mappings().all()
