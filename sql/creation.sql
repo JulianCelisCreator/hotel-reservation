@@ -400,3 +400,41 @@ BEGIN
     RETURN (v_precio_noche * v_noches) + v_total_extras;
 END;
 $$ LANGUAGE plpgsql;
+
+
+
+CREATE TABLE auditoria_reserva (
+    id_auditoria SERIAL PRIMARY KEY,
+    id_reserva INT,
+    accion VARCHAR(20),
+    fecha_evento TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    estado_anterior VARCHAR(20),
+    estado_nuevo VARCHAR(20)
+);
+
+CREATE OR REPLACE FUNCTION fn_auditar_reserva()
+RETURNS TRIGGER AS $$
+BEGIN
+
+    INSERT INTO auditoria_reserva (
+        id_reserva,
+        accion,
+        estado_anterior,
+        estado_nuevo
+    )
+    VALUES (
+        NEW.id_reserva,
+        TG_OP,
+        OLD.estado,
+        NEW.estado
+    );
+
+    RETURN NEW;
+
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_auditoria_reserva
+AFTER UPDATE ON reserva
+FOR EACH ROW
+EXECUTE FUNCTION fn_auditar_reserva();

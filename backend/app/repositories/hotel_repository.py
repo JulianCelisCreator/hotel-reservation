@@ -14,12 +14,16 @@ async def listar_hoteles(db: AsyncSession) -> list[Hotel]:
     return list(result.scalars().all())
 
 
-async def buscar_hoteles(db: AsyncSession, ciudad: str | None) -> list[Hotel]:
+async def buscar_hoteles(
+    db: AsyncSession,
+    ciudad: str | None
+) -> list[Hotel]:
     if not ciudad:
         return await listar_hoteles(db)
 
     # CTE recursivo: parte de cada lugar y sube por id_lugar_padre,
-    # conservando el id_lugar original (id_lugar_raiz) para unirlo al hotel.
+    # conservando el id_lugar original (id_lugar_raiz)
+    # para unirlo al hotel.
     base = (
         select(
             Lugar.id_lugar,
@@ -29,33 +33,113 @@ async def buscar_hoteles(db: AsyncSession, ciudad: str | None) -> list[Hotel]:
         )
         .cte(name="lugar_jerarquia", recursive=True)
     )
+
     recursive = select(
         Lugar.id_lugar,
         Lugar.nombre,
         Lugar.id_lugar_padre,
         base.c.id_lugar_raiz,
-    ).join(base, Lugar.id_lugar == base.c.id_lugar_padre)
+    ).join(
+        base,
+        Lugar.id_lugar == base.c.id_lugar_padre
+    )
 
     jerarquia = base.union_all(recursive)
 
     query = (
         select(Hotel)
         .options(_lugar_opts)
-        .join(jerarquia, Hotel.id_lugar == jerarquia.c.id_lugar_raiz)
-        .where(jerarquia.c.nombre.ilike(f"%{ciudad}%"))
+        .join(
+            jerarquia,
+            Hotel.id_lugar == jerarquia.c.id_lugar_raiz
+        )
+        .where(
+            jerarquia.c.nombre.ilike(f"%{ciudad}%")
+        )
         .distinct()
     )
+
     result = await db.execute(query)
+
     return list(result.scalars().all())
 
 
-async def get_by_id(db: AsyncSession, id_hotel: int) -> Hotel | None:
+async def get_by_id(
+    db: AsyncSession,
+    id_hotel: int
+) -> Hotel | None:
     result = await db.execute(
         select(Hotel)
         .options(
             _lugar_opts,
-            selectinload(Hotel.habitaciones).selectinload(Habitacion.tipo),
+            selectinload(Hotel.habitaciones)
+            .selectinload(Habitacion.tipo),
         )
         .where(Hotel.id_hotel == id_hotel)
     )
+
     return result.scalar_one_or_none()
+
+
+# ==========================
+# CREATE
+# ==========================
+
+async def create_hotel(
+    db: AsyncSession,
+    hotel: Hotel
+) -> Hotel:
+    db.add(hotel)
+
+    await db.commit()
+    await db.refresh(hotel)
+
+    return hotel
+
+
+# ==========================
+# UPDATE
+# ==========================
+
+async def update_hotel(
+    db: AsyncSession,
+    id_hotel: int,
+    datos: dict
+) -> Hotel | None:
+    hotel = await get_by_id(
+        db,
+        id_hotel
+    )
+
+    if not hotel:
+        return None
+
+    for campo, valor in datos.items():
+        setattr(hotel, campo, valor)
+
+    await db.commit()
+    await db.refresh(hotel)
+
+    return hotel
+
+
+# ==========================
+# DELETE
+# ==========================
+
+async def delete_hotel(
+    db: AsyncSession,
+    id_hotel: int
+) -> Hotel | None:
+    hotel = await get_by_id(
+        db,
+        id_hotel
+    )
+
+    if not hotel:
+        return None
+
+    await db.delete(hotel)
+    await db.commit()
+
+    return hotel
