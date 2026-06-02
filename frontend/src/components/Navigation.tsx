@@ -11,7 +11,6 @@ const navItemsBase: NavItem[] = [
   { label: 'Inicio', to: '/' },
   { label: 'Ofertas', to: '/#ofertas' },
   { label: 'Información de Hotel', to: '/#info' },
-  { label: 'Ubicación', to: '/#ubicacion' },
 ];
 
 function Navigation() {

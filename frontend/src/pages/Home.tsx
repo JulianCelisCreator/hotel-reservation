@@ -3,7 +3,6 @@ import HotelCard from '../components/HotelCard'
 import { Link } from 'react-router-dom'
 import type { Hotel } from '../services/hotelService'
 import { buscarHoteles, getHoteles } from '../services/hotelService'
-import HotelMap from '../components/HotelMap'
 import './Home.css'
 
 function todayISO(offset = 0): string {
@@ -149,16 +148,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="home-map" id="ubicacion">
-        <div className="home-map__inner">
-          <div className="home-map__head">
-            <h2 className="home-map__title">Ubicación</h2>
-            <p className="home-map__subtitle">Mapa interactivo con la ubicación de todos nuestros hoteles.</p>
-          </div>
-          <HotelMap hoteles={hoteles} />
-        </div>
-      </section>
-
       <section className="home-info" id="hoteles">
         <div className="home-listing__head">
           <h2 className="home-listing__title">Nuestros hoteles</h2>
@@ -166,33 +155,6 @@ export default function Home() {
             {loading ? 'Cargando…' : `${hoteles.length} resultado${hoteles.length === 1 ? '' : 's'}`}
           </p>
         </div>
-
-        {!loading && hoteles.length > 0 && (
-          <div className="home-listing__table-wrapper">
-            <table className="hotels-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Nombre</th>
-                  <th>Ubicación</th>
-                  <th>Dirección</th>
-                </tr>
-              </thead>
-              <tbody>
-                {hoteles.map((h) => (
-                  <tr key={h.id_hotel}>
-                    <td>{h.id_hotel}</td>
-                    <td>
-                      <Link to={`/hoteles/${h.id_hotel}`}>{h.nombre}</Link>
-                    </td>
-                    <td>{h.lugar?.nombre ?? '-'}</td>
-                    <td>{h.direccion ?? '-'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
 
         {!loading && !error && hoteles.length > 0 && (
           <div className="home-listing__grid">

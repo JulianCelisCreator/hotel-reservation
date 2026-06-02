@@ -11,33 +11,51 @@ interface Props {
 
 const HOTEL_IMAGES: Record<number, string[]> = {
   1: [
-    'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=900&q=80',
-    'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=900&q=80',
-    'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=900&q=80',
+    '/images/hotels/tequendama/foto1.jpg',
+    '/images/hotels/tequendama/foto2.jpg',
+    '/images/hotels/tequendama/foto3.jpg',
+    '/images/hotels/tequendama/foto4.jpg',
+    '/images/hotels/tequendama/foto5.jpg',
   ],
   2: [
-    'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=900&q=80',
-    'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=900&q=80',
-    'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=900&q=80',
+    '/images/hotels/dann-carlton/foto1.jpg',
+    '/images/hotels/dann-carlton/foto2.jpg',
+    '/images/hotels/dann-carlton/foto3.jpg',
+    '/images/hotels/dann-carlton/foto4.jpg',
+    '/images/hotels/dann-carlton/foto5.jpg',
   ],
   3: [
-    'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=900&q=80',
-    'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=900&q=80',
-    'https://images.unsplash.com/photo-1455587734955-081b22074882?w=900&q=80',
+    '/images/hotels/intercontinental/foto1.jpg',
+    '/images/hotels/intercontinental/foto2.avif',
+    '/images/hotels/intercontinental/foto3.avif',
+    '/images/hotels/intercontinental/foto4.avif',
+    '/images/hotels/intercontinental/foto5.webp',
   ],
   4: [
-    'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=900&q=80',
-    'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=900&q=80',
-    'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=900&q=80',
+    '/images/hotels/santa-clara/foto1.jpg',
+    '/images/hotels/santa-clara/foto2.jpg',
+    '/images/hotels/santa-clara/foto3.jpg',
+    '/images/hotels/santa-clara/foto4.jpg',
+    '/images/hotels/santa-clara/foto5.avif',
   ],
   5: [
-    'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=900&q=80',
-    'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=900&q=80',
-    'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=900&q=80',
+    '/images/hotels/chicamocha/foto1.jpg',
+    '/images/hotels/chicamocha/foto2.webp',
+    '/images/hotels/chicamocha/foto3.avif',
+    '/images/hotels/chicamocha/foto4.jpg',
+    '/images/hotels/chicamocha/foto5.jpg',
   ],
 }
 
 const FALLBACK = ['https://images.unsplash.com/photo-1455587734955-081b22074882?w=900&q=80']
+
+const HOTEL_CITIES: Record<number, string> = {
+  1: 'Bogotá D.C.',
+  2: 'Medellín',
+  3: 'Cali',
+  4: 'Cartagena de Indias',
+  5: 'Bucaramanga',
+}
 
 export default function HotelCard({ hotel, fechaInicio, fechaFin }: Props) {
   const imgs = HOTEL_IMAGES[hotel.id_hotel] ?? FALLBACK
@@ -133,7 +151,14 @@ export default function HotelCard({ hotel, fechaInicio, fechaFin }: Props) {
           </svg>
           {hotel.lugar?.nombre ?? 'Ubicación no disponible'}
         </p>
-        {hotel.direccion && <p className="hotel-card__address">{hotel.direccion}</p>}
+        {hotel.direccion && (
+          <p className="hotel-card__address">
+            {hotel.direccion}
+            {HOTEL_CITIES[hotel.id_hotel] && (
+              <span className="hotel-card__city"> · {HOTEL_CITIES[hotel.id_hotel]}</span>
+            )}
+          </p>
+        )}
         <div className="hotel-card__footer">
           <span className="hotel-card__cta">Ver detalles →</span>
         </div>
